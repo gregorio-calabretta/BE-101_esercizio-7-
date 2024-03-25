@@ -1,23 +1,16 @@
 package com.example.GestioneContocorrente.dtos;
 
+import lombok.Data;
+
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
-
+@Data
 public class UserDtoResponse {
-    private UUID user_id;
-    private String firstname;
-    private String lastname;
-    private String ssn;
-    private String username;
-
-    private Timestamp created_at;
-
-    public UserDtoResponse(UUID user_id, String firstname, String lastname, String ssn, String username, Timestamp created_at) {
-        this.user_id = user_id;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.ssn = ssn;
-        this.username = username;
-        this.created_at = created_at;
-    }
+    private final UUID id;
+    private final String firstname;
+    private final String lastname;
+    private final String ssn;
+    private final String username;
+    private final LocalDateTime createdAt;
 }

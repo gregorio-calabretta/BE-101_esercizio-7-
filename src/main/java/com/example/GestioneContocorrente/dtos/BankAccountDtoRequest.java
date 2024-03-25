@@ -3,17 +3,15 @@ package com.example.GestioneContocorrente.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-
+@Data
 public class BankAccountDtoRequest {
+    @JsonProperty(defaultValue = "0")
     private final long balance;
-    private final Timestamp created_at;
-
-    public BankAccountDtoRequest(@JsonProperty(value = "balance",required = true) long balance,
-                                 @JsonProperty(value = "created_at",required = true) Timestamp created_at) {
-        this.balance = balance;
-        this.created_at = created_at;
-    }
-
+    @JsonProperty
+    private final LocalDateTime createdAt;
+    @JsonProperty(value = "user_id",required = true)
+    private final UUID userId;
 }

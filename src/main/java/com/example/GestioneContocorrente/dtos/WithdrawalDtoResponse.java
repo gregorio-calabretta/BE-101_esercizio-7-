@@ -1,17 +1,12 @@
 package com.example.GestioneContocorrente.dtos;
 
-import java.sql.Timestamp;
+import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
-
+@Data
 public class WithdrawalDtoResponse {
-    private UUID withdrawal_id;
-    private Long amount;
-    private Timestamp date;
-
-    public WithdrawalDtoResponse(UUID withdrawal_id, Long amount, Timestamp date) {
-        this.withdrawal_id = withdrawal_id;
-        this.amount = amount;
-        this.date = date;
-    }
-
+    private final UUID id;
+    private final Long amount;
+    private final LocalDateTime date;
 }

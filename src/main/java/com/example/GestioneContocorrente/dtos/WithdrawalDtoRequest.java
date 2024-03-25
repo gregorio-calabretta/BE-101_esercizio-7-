@@ -1,20 +1,17 @@
 package com.example.GestioneContocorrente.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Data
 public class WithdrawalDtoRequest {
+    @JsonProperty
     private final Long amount;
-    private final Timestamp date;
-
-
-
-
-    public WithdrawalDtoRequest(@JsonProperty(value = "amount",required = true) Long amount,
-                                @JsonProperty(value = "date",required = true) Timestamp date) {
-        this.amount = amount;
-        this.date = date;
-    }
+    @JsonProperty(value = "user_id",required = true)
+    private final UUID userId;
+    @JsonProperty(value = "bank_account_id",required = true)
+    private final UUID bankAccountId;
 }
