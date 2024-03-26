@@ -6,26 +6,36 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
-import java.util.UUID;
+
+
+import java.time.LocalDateTime;
+
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "deposits")
+@Table(name = "deposit")
 public class Deposit {
+
     @Id
-    @Column(name = "deposit_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID deposit_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "amount")
     private Long amount;
 
     @Column(name = "date")
-    private Timestamp date;
+    private LocalDateTime date;
+
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
+    @JoinColumn(name="bank_account_id")
+    private BankAccount bankAccount;
+
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
+    @JoinColumn(name="user_id")
+    private User user;
 
 
 }
