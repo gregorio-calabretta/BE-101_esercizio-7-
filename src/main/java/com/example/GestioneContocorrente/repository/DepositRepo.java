@@ -8,12 +8,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
+
 @Repository
-public interface DepositRepo extends JpaRepository<Deposit, UUID> {
+public interface DepositRepo extends JpaRepository<Deposit, Long> {
     List<Deposit> findAll();
     Deposit save(Deposit deposit);
 
-    @Query(value = "SELECT * FROM (SELECT user_id, bank_account_id, date, amount, 'deposit' AS transactionType FROM deposit WHERE user_id LIKE CONCAT(:userId,'%') AND bank_account_id LIKE CONCAT(:bankAccountId,'%') UNION ALL SELECT user_id, bank_account_id, date, amount, 'withdrawal' AS transactionType FROM withdrawal WHERE user_id = CONCAT(:userId,'%')  AND bank_account_id = CONCAT(:bankAccountId,'%')) AS combined_transaction ORDER BY date DESC LIMIT 5",nativeQuery = true)
-    List<TransactionDto> getLast5TransactionsByUserIdAndBankAccountId(@Param("userId")UUID userId,@Param("bankAccountId") UUID bankAccountId);
+    @Query(value = "SELECT * FROM (SELECT user_id, bank_account_id,amount, date FROM deposit WHERE :user_id = deposit.user_id  AND :bank_account_id = deposit.bank_account_id UNION ALL SELECT user_id, bank_account_id,amount, date FROM withdrawal WHERE :user_id = withdrawal.user_id AND :bank_account_id = withdrawal.bank_account_id) AS transazioni_combinate ORDER BY date DESC LIMIT 5", nativeQuery = true)
+    List<TransactionDto> getLast5TransactionsByUserIdAndBankAccountId(@Param("user_id") Long userId, @Param("bank_account_id") Long bankAccountId);
+
+
 }

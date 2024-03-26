@@ -6,9 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+
+
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 
 @Data
 @Builder
@@ -19,8 +20,8 @@ import java.util.UUID;
 public class Deposit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "amount")
     private Long amount;

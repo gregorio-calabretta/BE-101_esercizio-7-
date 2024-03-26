@@ -2,20 +2,22 @@ package com.example.GestioneContocorrente.service;
 
 import com.example.GestioneContocorrente.dtos.TransactionDto;
 import com.example.GestioneContocorrente.repository.DepositRepo;
+import com.example.GestioneContocorrente.repository.TransactionRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
+
 @Service
 public class TransactionServiceImpl implements TransactionService{
-    private final DepositRepo depositRepo;
+    private final TransactionRepo transactionRepo;
 
-    public TransactionServiceImpl(DepositRepo depositRepo) {
-        this.depositRepo = depositRepo;
+    public TransactionServiceImpl(TransactionRepo transactionRepo) {
+        this.transactionRepo = transactionRepo;
     }
 
+
     @Override
-    public List<TransactionDto> getLast5Transactions(UUID userId,UUID bankAccountId) {
-        return depositRepo.getLast5TransactionsByUserIdAndBankAccountId(userId,bankAccountId);
+    public List<TransactionDto> getLast5Transactions(Long userId,Long bankAccountId) {
+        return transactionRepo.findLast5TransactionsByUserIdAndBankAccountId(userId,bankAccountId);
     }
 }

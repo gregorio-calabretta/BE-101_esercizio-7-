@@ -1,22 +1,15 @@
 package com.example.GestioneContocorrente.service;
 
-import com.example.GestioneContocorrente.dtos.DepositDtoResponse;
 import com.example.GestioneContocorrente.dtos.UserDtoRequest;
 import com.example.GestioneContocorrente.dtos.UserDtoResponse;
 import com.example.GestioneContocorrente.mappers.Mapper;
-import com.example.GestioneContocorrente.mappers.UserMapper;
-import com.example.GestioneContocorrente.model.Deposit;
 import com.example.GestioneContocorrente.model.User;
 import com.example.GestioneContocorrente.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService{
     private final Mapper<User, UserDtoResponse> mapper;
@@ -48,13 +41,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDtoResponse getUserById(UUID id) throws Exception {
+    public UserDtoResponse getUserById(Long id) throws Exception {
        User user = userRepo.getUserById(id).orElseThrow(()-> new Exception("User not found"));
        return mapper.map(user);
     }
 
     @Override
-    public void deleteUser(UUID id) {
+    public void deleteUser(Long id) {
     userRepo.deleteById(id);
     }
 }

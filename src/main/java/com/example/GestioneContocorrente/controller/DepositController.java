@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+
 
 @RequestMapping("/api/deposits")
 
@@ -34,14 +34,14 @@ public class DepositController {
         DepositDtoResponse responseDTO  = depositService.createDeposit(deposit);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
-    @GetMapping(path = "{depositUuid}")
-    public ResponseEntity<DepositDtoResponse> getDepositById(@PathVariable("depositUuid") UUID id) throws ResourceNotFoundException {
+    @GetMapping(path = "{depositLong}")
+    public ResponseEntity<DepositDtoResponse> getDepositById(@PathVariable("depositLong") Long id) throws ResourceNotFoundException {
         DepositDtoResponse responseDTO = depositService.getDepositById(id);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
-    @DeleteMapping(path = "{depositUuid}")
-    public void deleteBankAccountById(@PathVariable("depositUuid") UUID id){
+    @DeleteMapping(path = "{depositLong}")
+    public void deleteBankAccountById(@PathVariable("depositLong") Long id){
         depositService.deleteDeposit(id);
     }
 }

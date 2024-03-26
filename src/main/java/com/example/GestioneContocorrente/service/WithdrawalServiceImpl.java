@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+
 @Service
 public class WithdrawalServiceImpl implements WithdrawalService{
     private final Mapper<Withdrawal, WithdrawalDtoResponse> mapper;
@@ -41,13 +41,13 @@ public class WithdrawalServiceImpl implements WithdrawalService{
     }
 
     @Override
-    public WithdrawalDtoResponse getWithdrawalById(UUID id) throws Exception {
+    public WithdrawalDtoResponse getWithdrawalById(Long id) throws Exception {
         Withdrawal withdrawal = withdrawalRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("withdrawal not found"));
         return mapper.map(withdrawal);
     }
 
     @Override
-    public void deleteWithdrawal(UUID id) {
+    public void deleteWithdrawal(Long id) {
     withdrawalRepo.deleteById(id);
     }
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 
 @Data
 public class BankAccountDtoRequest {
@@ -13,5 +13,5 @@ public class BankAccountDtoRequest {
     @JsonProperty
     private final LocalDateTime createdAt;
     @JsonProperty(value = "user_id",required = true)
-    private final UUID userId;
+    private final Long userId;
 }

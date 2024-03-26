@@ -5,13 +5,13 @@ import com.example.GestioneContocorrente.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
+
 
 @Service
 public interface DepositService {
      List<DepositDtoResponse> getAlldeposits();
-     DepositDtoResponse getDepositById(UUID id) throws ResourceNotFoundException;
-     void deleteDeposit(UUID id);
+     DepositDtoResponse getDepositById(Long id) throws ResourceNotFoundException;
+     void deleteDeposit(Long id);
 
      DepositDtoResponse createDeposit(DepositDtoRequest depositDtoRequest) throws ResourceNotFoundException;
 

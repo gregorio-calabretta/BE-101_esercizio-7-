@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+
 
 @RequestMapping("/api/withdrawals")
 
@@ -34,14 +34,14 @@ public class WithdrawalController {
         WithdrawalDtoResponse responseDTO  = withdrawalService.createWithdrawal(withdrawal);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
-    @GetMapping(path = "{withdrawalUuid}")
-    public ResponseEntity<WithdrawalDtoResponse> getWithdrawalById(@PathVariable("withdrawalUuid") UUID id) throws Exception {
+    @GetMapping(path = "{withdrawalLong}")
+    public ResponseEntity<WithdrawalDtoResponse> getWithdrawalById(@PathVariable("withdrawalLong") Long id) throws Exception {
         WithdrawalDtoResponse responseDTO = withdrawalService.getWithdrawalById(id);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
-    @DeleteMapping(path = "{withdrawalUuid}")
-    public void deleteWithdrawalById(@PathVariable("withdrawalUuid") UUID id){
+    @DeleteMapping(path = "{withdrawalLong}")
+    public void deleteWithdrawalById(@PathVariable("withdrawalLong") Long id){
         withdrawalService.deleteWithdrawal(id);
     }
 }

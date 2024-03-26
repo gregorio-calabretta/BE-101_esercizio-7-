@@ -6,13 +6,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 @Repository
-public interface BankAccountRepo extends JpaRepository<BankAccount, UUID> {
+public interface BankAccountRepo extends JpaRepository<BankAccount, Long> {
     List<BankAccount> findAll();
     BankAccount save(BankAccount bankAccount);
 
-    Optional<BankAccount> findById(UUID id);
+    Optional<BankAccount> findById(Long id);
 
-    void deleteById(UUID id);
+    void deleteById(Long id);
 }

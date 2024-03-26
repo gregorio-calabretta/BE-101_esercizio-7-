@@ -7,13 +7,13 @@ import com.example.GestioneContocorrente.dtos.UserDtoResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
+
 
 @Service
 public interface UserService {
      List<UserDtoResponse> getAllUsers();
      UserDtoResponse createUser(UserDtoRequest userDtoRequest);
-     UserDtoResponse getUserById(UUID id) throws Exception;
-     void deleteUser(UUID id);
+     UserDtoResponse getUserById(Long id) throws Exception;
+     void deleteUser(Long id);
 
 }

@@ -1,15 +1,12 @@
 package com.example.GestioneContocorrente.service;
 
-import com.example.GestioneContocorrente.dtos.BankAccountDtoResponse;
 import com.example.GestioneContocorrente.dtos.DepositDtoRequest;
 import com.example.GestioneContocorrente.dtos.DepositDtoResponse;
 import com.example.GestioneContocorrente.exception.ResourceNotFoundException;
-import com.example.GestioneContocorrente.mappers.DepositMapper;
 import com.example.GestioneContocorrente.mappers.Mapper;
 import com.example.GestioneContocorrente.model.BankAccount;
 import com.example.GestioneContocorrente.model.Deposit;
 import com.example.GestioneContocorrente.model.User;
-import com.example.GestioneContocorrente.model.Withdrawal;
 import com.example.GestioneContocorrente.repository.BankAccountRepo;
 import com.example.GestioneContocorrente.repository.DepositRepo;
 import com.example.GestioneContocorrente.repository.UserRepo;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 @Service
 public class DepositServiceImpl implements DepositService{
     private final DepositRepo depositRepo;
@@ -40,13 +36,13 @@ public class DepositServiceImpl implements DepositService{
     }
 
     @Override
-    public DepositDtoResponse getDepositById(UUID id) throws ResourceNotFoundException {
+    public DepositDtoResponse getDepositById(Long id) throws ResourceNotFoundException {
         Deposit deposit = depositRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Deposit not found"));
         return mapper.map(deposit);
     }
 
     @Override
-    public void deleteDeposit(UUID id) {
+    public void deleteDeposit(Long id) {
         depositRepo.deleteById(id);
     }
 

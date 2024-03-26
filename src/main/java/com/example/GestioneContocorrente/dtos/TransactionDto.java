@@ -3,13 +3,13 @@ package com.example.GestioneContocorrente.dtos;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Date;
 
 @Data
 
 public class TransactionDto {
-    private final UUID bank_account_id;
-    private final UUID user_id;
+    private final Long bank_account_id;
+    private final Long user_id;
     private final long amount;
-    private final LocalDateTime date;
+    private final Date date;
 }

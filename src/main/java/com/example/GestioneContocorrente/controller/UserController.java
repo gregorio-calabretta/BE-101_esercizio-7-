@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+
 
 @RequestMapping("/api/users")
 
@@ -34,13 +34,13 @@ public class UserController {
         bankAccountService.createBankAccount(new BankAccountDtoRequest(0, LocalDateTime.now(),responseDTO.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
-    @GetMapping(path = "{userUuid}")
-    public ResponseEntity<UserDtoResponse> getUserById(@PathVariable("userUuid") UUID id) throws Exception {
+    @GetMapping(path = "{userLong}")
+    public ResponseEntity<UserDtoResponse> getUserById(@PathVariable("userLong") Long id) throws Exception {
         UserDtoResponse responseDTO = userService.getUserById(id);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
-    @DeleteMapping(path = "{userUuid}")
-    public void deleteUserById(@PathVariable("userUuid") UUID id){
+    @DeleteMapping(path = "{userLong}")
+    public void deleteUserById(@PathVariable("userLong") Long id){
         userService.deleteUser(id);
     }
 

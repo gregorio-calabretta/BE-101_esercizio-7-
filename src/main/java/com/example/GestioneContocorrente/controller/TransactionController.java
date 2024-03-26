@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
+
 
 @RequestMapping("/api/transactions")
 
@@ -22,8 +22,8 @@ public class TransactionController {
     }
 
 
-    @GetMapping(path = "users/{userUuid}/bankaccounts/{bankAccountUuid}")
-public ResponseEntity<List<TransactionDto>> getLast5Transactions(@PathVariable("userUuid") UUID userId,@PathVariable("bankAccountUuid") UUID bankAccountId) throws Exception {
+    @GetMapping(path = "users/{userLong}/bankaccounts/{bankAccountLong}")
+public ResponseEntity<List<TransactionDto>> getLast5Transactions(@PathVariable("userLong") Long userId,@PathVariable("bankAccountLong") Long bankAccountId) throws Exception {
         List<TransactionDto> responseDTO = transactionService.getLast5Transactions(userId,bankAccountId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }

@@ -9,13 +9,13 @@ import com.example.GestioneContocorrente.exception.WithdrawalExceedFundsExceptio
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
+
 
 @Service
 public interface WithdrawalService {
     List<WithdrawalDtoResponse> getAllWithdrawals();
-    WithdrawalDtoResponse getWithdrawalById(UUID id) throws Exception;
-    void deleteWithdrawal(UUID id);
+    WithdrawalDtoResponse getWithdrawalById(Long id) throws Exception;
+    void deleteWithdrawal(Long id);
 
     WithdrawalDtoResponse createWithdrawal(WithdrawalDtoRequest withdrawal) throws ResourceNotFoundException, WithdrawalExceedFundsException;
 }
