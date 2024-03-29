@@ -2,6 +2,7 @@ package com.example.GestioneContocorrente.service;
 
 import com.example.GestioneContocorrente.dtos.UserDtoRequest;
 import com.example.GestioneContocorrente.dtos.UserDtoResponse;
+import com.example.GestioneContocorrente.exception.ResourceNotFoundException;
 import com.example.GestioneContocorrente.mappers.Mapper;
 import com.example.GestioneContocorrente.model.User;
 import com.example.GestioneContocorrente.repository.UserRepo;
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDtoResponse getUserById(Long id) throws Exception {
-       User user = userRepo.getUserById(id).orElseThrow(()-> new Exception("User not found"));
+       User user = userRepo.getUserById(id).orElseThrow(()-> new ResourceNotFoundException("User not found"));
        return mapper.map(user);
     }
 

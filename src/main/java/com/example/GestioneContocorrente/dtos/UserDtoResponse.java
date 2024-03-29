@@ -1,5 +1,6 @@
 package com.example.GestioneContocorrente.dtos;
 
+import com.example.GestioneContocorrente.model.User;
 import lombok.Data;
 
 
@@ -13,4 +14,6 @@ public class UserDtoResponse {
     private final String ssn;
     private final String username;
     private final LocalDateTime createdAt;
+
+
 }

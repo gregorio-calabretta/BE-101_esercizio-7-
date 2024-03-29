@@ -12,4 +12,6 @@ public class TransactionDto {
     private final Long user_id;
     private final long amount;
     private final Date date;
+    private final String type;
+
 }

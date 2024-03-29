@@ -9,6 +9,6 @@ import java.util.List;
 @Component
 public class UserMapper implements Mapper<User,UserDtoResponse> {
     public UserDtoResponse map(User user) {
-        return new UserDtoResponse(user.getId(),user.getFirstname(),user.getLastname(),user.getSsn(),user.getPassword(),user.getCreatedAt());
+        return new UserDtoResponse(user.getId(),user.getFirstname(),user.getLastname(),user.getSsn(),user.getUsername(),user.getCreatedAt());
     }
 }
