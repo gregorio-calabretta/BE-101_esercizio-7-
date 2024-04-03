@@ -2,6 +2,7 @@ package com.example.GestioneContocorrente.service;
 
 import com.example.GestioneContocorrente.dtos.BankAccountDtoRequest;
 import com.example.GestioneContocorrente.dtos.BankAccountDtoResponse;
+import com.example.GestioneContocorrente.exception.InvalidInputException;
 import com.example.GestioneContocorrente.exception.ResourceNotFoundException;
 import com.example.GestioneContocorrente.mappers.Mapper;
 import com.example.GestioneContocorrente.model.BankAccount;
@@ -45,6 +46,9 @@ public class BankAccountServiceImpl implements BankAccountService{
 
     @Override
     public BankAccountDtoResponse getBankAccountById(Long id) throws Exception {
+        if(id == null ) {
+        throw new InvalidInputException("id can't be null");
+        }
         BankAccount bankAccount = bankAccountRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Bank account not found"));
         return mapper.map(bankAccount);
     }

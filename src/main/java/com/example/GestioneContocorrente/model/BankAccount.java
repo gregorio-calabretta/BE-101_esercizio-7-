@@ -1,10 +1,7 @@
 package com.example.GestioneContocorrente.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,8 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@EqualsAndHashCode(exclude = {"createdAt"})
 @Table(name = "bank_account")
-
 public class BankAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

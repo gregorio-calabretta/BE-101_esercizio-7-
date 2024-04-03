@@ -1,14 +1,11 @@
 package com.example.GestioneContocorrente.service;
 
-import com.example.GestioneContocorrente.dtos.DepositDtoResponse;
 import com.example.GestioneContocorrente.dtos.WithdrawalDtoRequest;
 import com.example.GestioneContocorrente.dtos.WithdrawalDtoResponse;
 import com.example.GestioneContocorrente.exception.ResourceNotFoundException;
 import com.example.GestioneContocorrente.exception.WithdrawalExceedFundsException;
 import com.example.GestioneContocorrente.mappers.Mapper;
-import com.example.GestioneContocorrente.mappers.WithdrawalMapper;
 import com.example.GestioneContocorrente.model.BankAccount;
-import com.example.GestioneContocorrente.model.Deposit;
 import com.example.GestioneContocorrente.model.User;
 import com.example.GestioneContocorrente.model.Withdrawal;
 import com.example.GestioneContocorrente.repository.BankAccountRepo;

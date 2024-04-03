@@ -12,15 +12,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.nio.file.Files.delete;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class UserServiceTest {
@@ -29,6 +33,7 @@ public class UserServiceTest {
 
     @MockBean
     private UserRepo userRepo;
+    MockMvc mockMvc;
 
 
     @Test
@@ -104,4 +109,24 @@ public class UserServiceTest {
         // Assert the response
         assertNotNull(returnedUser, "The saved user should not be null");
     }
+
+    @Test
+    @DisplayName("Test delete user")
+    void testDelete() {
+        // Set up our mock repository
+        User user = User.builder().id(1L).firstname("firstname").lastname("lastname").
+                ssn("ssn").createdAt(LocalDateTime.now()).
+                username("username").password("password").build();
+
+        doNothing().when(userRepo).deleteById(user.getId());
+
+
+        // Execute the service call
+          userService.deleteUser(user.getId());
+
+        verify(userRepo, times(1)).deleteById(user.getId());
+
+    }
+
+
 }
