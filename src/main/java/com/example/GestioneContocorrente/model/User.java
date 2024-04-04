@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-@EqualsAndHashCode(exclude = {"createdAt"})
+@EqualsAndHashCode(exclude = {"createdAt","id"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

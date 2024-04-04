@@ -3,129 +3,120 @@ package com.example.GestioneContocorrente;
 import com.example.GestioneContocorrente.dtos.UserDtoRequest;
 import com.example.GestioneContocorrente.dtos.UserDtoResponse;
 import com.example.GestioneContocorrente.exception.ResourceNotFoundException;
+import com.example.GestioneContocorrente.mappers.UserMapper;
 import com.example.GestioneContocorrente.model.User;
 import com.example.GestioneContocorrente.repository.UserRepo;
-import com.example.GestioneContocorrente.service.UserService;
+import com.example.GestioneContocorrente.service.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.nio.file.Files.delete;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class UserServiceTest {
-    @Autowired
-    private UserService userService;
 
-    @MockBean
+
+    @Mock
     private UserRepo userRepo;
-    MockMvc mockMvc;
+    @Mock
+    private UserMapper userMapper;
+
+    @InjectMocks
+    private UserServiceImpl userService;
+
+    User user = User.builder().id(1L).firstname("firstname").lastname("lastname").
+            ssn("ssn").createdAt(LocalDateTime.now()).
+            username("username").password("password").build();
+
+    User user2 = User.builder().id(1L).firstname("Gigi").lastname("Rossi").
+            ssn("jojnasd3").createdAt(LocalDateTime.now()).
+            username("jkjkd").password("jciisk354wja").build();
+
+
+    UserDtoResponse userDtoResponse = new UserDtoResponse(user.getId(),
+            user.getFirstname(), user.getLastname(), user.getSsn(),
+            user.getUsername(), user.getCreatedAt());
+    UserDtoResponse userDtoResponse2 = new UserDtoResponse(user2.getId(),
+            user2.getFirstname(), user2.getLastname(), user2.getSsn(),
+            user2.getUsername(), user2.getCreatedAt());
+
+    UserDtoRequest userDtoRequest = new UserDtoRequest(user.getFirstname(),
+            user.getLastname(),user.getSsn(),user.getUsername(),user.getPassword());
 
 
     @Test
-    @DisplayName("Test findById Success")
-    void testFindById() throws Exception {
-        User user = User.builder().id(1L).firstname("firstname").lastname("lastname").
-                ssn("ssn").createdAt(LocalDateTime.now()).
-                username("username").password("password").build();
-//doReturn(VALUE_TO_RETURN).when(MOCK_CLASS_INSTANCE).MOCK_METHOD
-        doReturn(Optional.of(user)).when(userRepo).getUserById(1L);
+    public void givenLongId_whenFindById_thenReturnUser() throws Exception {
 
-        UserDtoResponse expectedDTO = new UserDtoResponse(user.getId(),
-                        user.getFirstname(),user.getLastname(),user.getSsn(),
-                        user.getUsername(),user.getCreatedAt());
+        when(userRepo.findById(1L)).thenReturn(Optional.of(user));
+        when(userMapper.map(user)).thenReturn(userDtoResponse);
 
-        // Execute the service call
-        UserDtoResponse returnedUser = userService.getUserById(1L);
+        UserDtoResponse response = userService.getUserById(1L);
 
-        // Assert the response
-
-        assertNotNull(returnedUser);
-        assertEquals(expectedDTO, returnedUser);
+        assertNotNull(response);
+        assertEquals(response,userDtoResponse);
     }
 
     @Test
-    @DisplayName("Test findById Not Found")
-    void testFindByIdNotFound()   {
-        // Setup our mock repository
+    public void givenLongId_whenFindByUser_thenThrowResourceNotFoundException()   {
         doReturn(Optional.empty()).when(userRepo).findById(1L);
-        //asserts that it throws a ResourceNotFoundException. If the exception is not thrown, the test fails.
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(1L),
                 "Expected ResourceNotFoundException when user is not found");
 
-        // Verify exception message
         assertEquals("User not found", exception.getMessage());
     }
 
     @Test
-    @DisplayName("Test findAll")
-    void testFindAll() {
-        // Setup our mock repository
-        User user = User.builder().id(1L).firstname("firstname").lastname("lastname").
-                ssn("ssn").createdAt(LocalDateTime.now()).
-                username("username").password("password").build();
-        User user2 = User.builder().id(2L).firstname("firstname2").lastname("lastname2").
-                ssn("ssn2").createdAt(LocalDateTime.now()).
-                username("username2").password("password2").build();
-        doReturn(Arrays.asList(user, user2)).when(userRepo).findAll();
+    public void whenFindAll_thenReturnAllUsers() {
+        List<User> userList = new ArrayList<>();
+        userList.add(user);
+        userList.add(user2);
 
-        // Execute the service call
-        List<UserDtoResponse> users = userService.getAllUsers();
+        List<UserDtoResponse> userDtoResponseList = new ArrayList<>();
+        userDtoResponseList.add(userDtoResponse);
+        userDtoResponseList.add(userDtoResponse2);
 
-        // Assert the response
-        Assertions.assertEquals(2, users.size(), "findAll should return 2 users");
+        when(userRepo.findAll()).thenReturn((userList));
+
+        when(userMapper.mapAll(userList))
+                .thenReturn(userDtoResponseList);
+
+
+        List<UserDtoResponse> response = userService.getAllUsers();
+
+        Assertions.assertEquals(2, response.size(), "findAll should return 2 users");
     }
 
     @Test
-    @DisplayName("Test save user")
-    void testSave() {
-        // Set up our mock repository
-        User user = User.builder().id(1L).firstname("firstname").lastname("lastname").
-                ssn("ssn").createdAt(LocalDateTime.now()).
-                username("username").password("password").build();
-        doReturn(user).when(userRepo).save(any());
+    public void whenSave_thenSaveAndReturnUser() {
 
-        UserDtoRequest dtoRequest = new UserDtoRequest(
-                user.getFirstname(),user.getLastname(),user.getSsn(),
-                user.getUsername(),user.getPassword());
+        when(userRepo.save(user)).thenReturn(user);
 
-        // Execute the service call
-        UserDtoResponse returnedUser= userService.createUser(dtoRequest);
+        when(userMapper.map(user)).thenReturn(userDtoResponse);
 
-        // Assert the response
-        assertNotNull(returnedUser, "The saved user should not be null");
+        UserDtoResponse response = userService.createUser(userDtoRequest);
+
+        assertEquals(response,userDtoResponse);
     }
 
     @Test
-    @DisplayName("Test delete user")
-    void testDelete() {
-        // Set up our mock repository
-        User user = User.builder().id(1L).firstname("firstname").lastname("lastname").
-                ssn("ssn").createdAt(LocalDateTime.now()).
-                username("username").password("password").build();
-
-        doNothing().when(userRepo).deleteById(user.getId());
-
-
-        // Execute the service call
-          userService.deleteUser(user.getId());
-
+    public void testDelete() {
+        userService.deleteUser(user.getId());
         verify(userRepo, times(1)).deleteById(user.getId());
-
     }
 
 

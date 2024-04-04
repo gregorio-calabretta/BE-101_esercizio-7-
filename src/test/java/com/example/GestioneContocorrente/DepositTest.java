@@ -1,12 +1,16 @@
 package com.example.GestioneContocorrente;
 
+import com.example.GestioneContocorrente.dtos.DepositDtoRequest;
 import com.example.GestioneContocorrente.dtos.DepositDtoResponse;
 import com.example.GestioneContocorrente.exception.ResourceNotFoundException;
 import com.example.GestioneContocorrente.mappers.DepositMapper;
 import com.example.GestioneContocorrente.model.BankAccount;
 import com.example.GestioneContocorrente.model.Deposit;
 import com.example.GestioneContocorrente.model.User;
+import com.example.GestioneContocorrente.repository.BankAccountRepo;
 import com.example.GestioneContocorrente.repository.DepositRepo;
+import com.example.GestioneContocorrente.repository.UserRepo;
+import com.example.GestioneContocorrente.service.BankAccountService;
 import com.example.GestioneContocorrente.service.DepositServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,18 +29,25 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class DepositTest {
-    private static final LocalDateTime DATE_TIME = LocalDateTime.of(2020, 2, 1,1,1);
+    private static final LocalDateTime DATE_TIME = LocalDateTime.of(2020, 2, 1, 1, 1);
 
     public static final long AMOUNT = 300;
     @Mock
     private DepositRepo depositRepo;
 
+    @Mock
+    private UserRepo userRepo;
+    @Mock
+    private BankAccountRepo bankAccountRepo;
+    @Mock
+    private BankAccountService bankAccountService;
     @Mock
     private DepositMapper depositMapper;
 
@@ -46,10 +57,12 @@ public class DepositTest {
     User user = User.builder().id(1L).firstname("Giacomo").lastname("Rossi").ssn("yuyuvhjbjh")
             .username("hhh").password("hbhjkb67tg").createdAt(DATE_TIME).build();
 
+    DepositDtoRequest depositDtoRequest = new DepositDtoRequest(100L, 1L, 1L);
+
     BankAccount bankAccount = BankAccount
             .builder()
             .id(1L)
-            .balance(2*AMOUNT)
+            .balance(2 * AMOUNT)
             .createdAt(DATE_TIME)
             .build();
     Deposit deposit = Deposit
@@ -62,42 +75,38 @@ public class DepositTest {
     Deposit deposit2 = Deposit
             .builder()
             .id(2L)
-            .amount(2*AMOUNT)
+            .amount(2 * AMOUNT)
             .user(user)
             .bankAccount(bankAccount)
             .build();
-    DepositDtoResponse depositDtoResponse = new DepositDtoResponse(1L,AMOUNT,DATE_TIME);
-    DepositDtoResponse depositDtoResponse2 = new DepositDtoResponse(2L,2*AMOUNT,DATE_TIME);
-
+    DepositDtoResponse depositDtoResponse = new DepositDtoResponse(1L, AMOUNT, DATE_TIME);
+    DepositDtoResponse depositDtoResponse2 = new DepositDtoResponse(2L, 2 * AMOUNT, DATE_TIME);
 
 
     @Test
-    public void testFindById() throws Exception {
+    public void givenLongId_whenFindById_thenReturnDeposit() throws Exception {
         when(depositRepo.findById(1L)).thenReturn(Optional.of(deposit));
         when(depositMapper.map(deposit)).thenReturn(depositDtoResponse);
 
         DepositDtoResponse response = depositService.getDepositById(1L);
 
         assertNotNull(response);
-        assertEquals(depositDtoResponse,response);
-        Assertions.assertDoesNotThrow(() -> depositService.getDepositById(1L));
+        assertEquals(depositDtoResponse, response);
     }
 
 
-
-
     @Test
-    public void testFindByIdShouldReturnException() {
+    public void givenLongId_whenFindByLongId_ThenReturnEmpty() {
+        when(depositRepo.findById(2L)).thenReturn(Optional.empty());
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> depositService.getDepositById(2L));
 
-        Assertions.assertThrows(ResourceNotFoundException.class,() -> depositService.getDepositById(4L));
     }
 
     @Test
-    public void testGetAllDeposits()  {
+    public void whenFindAll_thenReturnAllDeposits() {
         List<Deposit> depositList = new ArrayList<>();
         depositList.add(deposit);
         depositList.add(deposit2);
-
         List<DepositDtoResponse> depositDtoResponseList = new ArrayList<>();
         depositDtoResponseList.add(depositDtoResponse);
         depositDtoResponseList.add(depositDtoResponse2);
@@ -113,5 +122,38 @@ public class DepositTest {
         Assertions.assertEquals(depositDtoResponseList, response);
     }
 
+    @Test
+    public void givenDeposit_whenSaveDeposit_thenCreateDeposit() throws ResourceNotFoundException {
+        when(userRepo.findById(1L)).thenReturn(Optional.of(user));
+        when(bankAccountRepo.findById(1L)).thenReturn(Optional.of(bankAccount));
 
+        depositService.createDeposit(depositDtoRequest);
+
+        verify(depositRepo, times(1)).save(any(Deposit.class));
+        verify(bankAccountRepo, times(1)).save(bankAccount);
+    }
+
+    @Test
+    public void givenInvalidUserId_whenCreateDeposit_thenThrowResourceNotFoundException() {
+
+        when(userRepo.findById(1L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            depositService.createDeposit(depositDtoRequest);
+        });
+    }
+
+    @Test
+    public void givenInvalidBankAccountId_whenCreateDeposit_thenThrowResourceNotFoundException() {
+
+
+        when(userRepo.findById(1L)).thenReturn(Optional.of(user));
+        when(bankAccountRepo.findById(1L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            depositService.createDeposit(depositDtoRequest);
+        });
+
+
+    }
 }

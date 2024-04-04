@@ -3,6 +3,7 @@ package com.example.GestioneContocorrente;
 import com.example.GestioneContocorrente.dtos.BankAccountDtoRequest;
 import com.example.GestioneContocorrente.dtos.BankAccountDtoResponse;
 import com.example.GestioneContocorrente.dtos.UserDtoResponse;
+import com.example.GestioneContocorrente.exception.InvalidInputException;
 import com.example.GestioneContocorrente.exception.ResourceNotFoundException;
 import com.example.GestioneContocorrente.mappers.BankAccountMapper;
 import com.example.GestioneContocorrente.model.BankAccount;
@@ -26,14 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BankAccountServiceTest {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+class BankAccountTest {
     private static final LocalDateTime DATE_TIME = LocalDateTime.of(2020, 2, 1,1,1);
 
     public static final int BALANCE = 300;
@@ -48,12 +46,12 @@ public class BankAccountServiceTest {
     private BankAccountServiceImpl bankAccountService;
 
 
-        BankAccount bankAccount = BankAccount
-                .builder()
-                .id(1L)
-                .balance(BALANCE)
-                .createdAt(DATE_TIME)
-                .build();
+    BankAccount bankAccount = BankAccount
+            .builder()
+            .id(1L)
+            .balance(BALANCE)
+            .createdAt(DATE_TIME)
+            .build();
 
     BankAccount bankAccount2 = BankAccount
             .builder()
@@ -69,34 +67,36 @@ public class BankAccountServiceTest {
 
 
 
-        BankAccountDtoResponse bankAccountDtoResponse = new BankAccountDtoResponse(1L,BALANCE,DATE_TIME);
-        BankAccountDtoResponse bankAccountDtoResponse2 = new BankAccountDtoResponse(2L,2*BALANCE,DATE_TIME);
-        BankAccountDtoRequest bankAccountDtoRequest = new BankAccountDtoRequest(bankAccount.getBalance(),bankAccount.getCreatedAt(),user.getId());
-        UserDtoResponse userDtoResponse = new UserDtoResponse(user.getId(), user.getFirstname(),user.getLastname()
-                ,user.getSsn(),user.getUsername(),user.getCreatedAt());
+    BankAccountDtoResponse bankAccountDtoResponse = new BankAccountDtoResponse(1L,BALANCE,DATE_TIME);
+    BankAccountDtoResponse bankAccountDtoResponse2 = new BankAccountDtoResponse(2L,2*BALANCE,DATE_TIME);
+    BankAccountDtoRequest bankAccountDtoRequest = new BankAccountDtoRequest(bankAccount.getBalance(),bankAccount.getCreatedAt(),user.getId());
+    UserDtoResponse userDtoResponse = new UserDtoResponse(user.getId(), user.getFirstname(),user.getLastname()
+            ,user.getSsn(),user.getUsername(),user.getCreatedAt());
 
     @Test
-    public void testFindNameById() throws Exception {
+    public void givenLongId_whenFindById_thenReturnBankAccount() throws Exception {
         when(bankAccountRepo.findById(1L)).thenReturn(Optional.of(bankAccount));
         when(bankAccountMapper.map(bankAccount)).thenReturn(bankAccountDtoResponse);
         BankAccountDtoResponse response = bankAccountService.getBankAccountById(1L);
-        assertNotNull(response);
-        assertEquals(bankAccount,response);
-        Assertions.assertDoesNotThrow(() -> bankAccountService.getBankAccountById(1L));
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(bankAccountDtoResponse, response);
     }
 
 
 
-
     @Test
-    public void testFindNameByIdShouldReturnException() {
-        when(bankAccountRepo.findById(2L)).thenReturn(Optional.of(bankAccount));
-        when(bankAccountMapper.map(bankAccount)).thenReturn(bankAccountDtoResponse);
-        Assertions.assertThrows(ResourceNotFoundException.class,() -> bankAccountService.getBankAccountById(1L));
+    public void givenNullId_whenGetBankAccountById_thenReturnInvalidInputException()  {
+        Assertions.assertThrows(InvalidInputException.class,() -> bankAccountService.getBankAccountById(null));
     }
 
     @Test
-    public void testGetAllBankAccounts(){
+    public void givenLongId_whenFindById_thenReturnResourceNotFoundException() {
+        when(bankAccountRepo.findById(2L)).thenReturn(Optional.empty());
+        Assertions.assertThrows(ResourceNotFoundException.class,() -> bankAccountService.getBankAccountById(2L));
+    }
+
+    @Test
+    public void whenFindAll_thenReturnAllBankAccounts(){
         List<BankAccount> accountList = new ArrayList<>();
         accountList.add(bankAccount);
         accountList.add(bankAccount2);
@@ -108,7 +108,7 @@ public class BankAccountServiceTest {
         when(bankAccountRepo.findAll()).thenReturn((accountList));
 
         when(bankAccountMapper.mapAll(accountList))
-        .thenReturn(bankAccountDtoResponseList);
+                .thenReturn(bankAccountDtoResponseList);
 
         List<BankAccountDtoResponse> response = bankAccountService.getAllBankAccounts();
 
@@ -121,7 +121,7 @@ public class BankAccountServiceTest {
 
 
     @Test
-    public void testCreateBankAccount() throws Exception {
+    public void givenUserAndBankAccount_whenSaveBankAccount_thenReturnBankAccount() throws Exception {
         when(bankAccountRepo.save(bankAccount)).thenReturn(bankAccount);
         when(userRepo.save(user)).thenReturn(user);
         when(userRepo.findById(user.getId())).thenReturn(Optional.of(user));
@@ -136,10 +136,9 @@ public class BankAccountServiceTest {
         when(bankAccountMapper.map(bankAccountForMapping)).thenReturn(bankAccountDtoResponse);
 
 
-    BankAccountDtoResponse response = bankAccountService.createBankAccount(bankAccountDtoRequest);
+        BankAccountDtoResponse response = bankAccountService.createBankAccount(bankAccountDtoRequest);
 
-    Assertions.assertEquals(bankAccountDtoResponse, response);
+        Assertions.assertEquals(bankAccountDtoResponse, response);
     }
-
 
 }
